@@ -1,0 +1,91 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodebb-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodebb
+  template:
+    metadata:
+      labels:
+        app: nodebb
+    spec:
+      containers:
+      - name: backend
+        image: docker.io/superhero7/test:1.0
+        
+        ports:
+        - name: http
+          containerPort: 8080
+      imagePullSecrets:
+      - name: dockersecret  
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodebb-service
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+  selector:
+    app: nodebb
+    
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nginx-web
+  namespace: default
+  labels:
+    app: nginx-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-web
+  template:
+    metadata:
+      labels:
+        app: nginx-web
+    spec:
+      containers:
+      - name: nginx
+        image: "nginx"
+        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-web
+  namespace: default
+spec:
+  selector:
+    app: nginx-web
+  ports:
+  - name: http
+    targetPort: 80
+    port: 80 
+---    
+apiVersion: getambassador.io/v2
+kind: Mapping
+metadata:
+  name: nodebb-mapping
+spec:
+  prefix: /
+  service: nodebb-service
+  host: ingress.tapin.website
+---  
+apiVersion: getambassador.io/v2
+kind:  Mapping
+metadata:
+  name:  nginx-mapping
+spec:
+  prefix: /
+  service: nginx-web
+  host: ingress2.tapin.website  
+

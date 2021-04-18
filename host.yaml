@@ -1,0 +1,22 @@
+---
+apiVersion: getambassador.io/v2
+kind: Host
+metadata:
+  name: example-host
+spec:
+  hostname: ingress.tapin.website
+  acmeProvider:
+    authority: none
+  tlsSecret:
+    name: ingress
+---
+apiVersion: getambassador.io/v2
+kind: Host
+metadata:
+  name: example-host1
+spec:
+  hostname: ingress2.tapin.website
+  acmeProvider:
+    authority: none
+  tlsSecret:
+    name: ingress2
