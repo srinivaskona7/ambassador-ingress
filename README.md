@@ -1,4 +1,4 @@
-# ambassador-ingress
+# ambassador-ingress process
 
 # URL for ambassador controller process
 
